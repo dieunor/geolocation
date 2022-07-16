@@ -3,10 +3,6 @@ pipeline {
     tools{
         maven 'M2_HOME'
     }
-    environment {
-        registry = '076892551558.dkr.ecr.us-east-1.amazonaws.com/geolocation_ecr_rep'
-        dockerimage = '' 
-    }
     stages {
         stage('Checkout'){
             steps{
@@ -21,23 +17,6 @@ pipeline {
         stage('Test') {
             steps {
                 sh 'mvn test'
-            }
-        }
-        // Building Docker images
-        stage('Building image') {
-            steps{
-                script {
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
-                }
-            }
-        }
-        // Uploading Docker images into AWS ECR
-        stage('Pushing to ECR') {
-            steps{
-                script {
-                    sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 932663817409.dkr.ecr.us-east-1.amazonaws.com.com'
-                    sh 'docker push 932663817409.dkr.ecr.us-east-1.amazonaws.com/geolocation_ecr_rep:latest'
-                }
             }
         }
     }
